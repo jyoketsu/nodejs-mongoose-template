@@ -1,32 +1,45 @@
 import { Schema, model } from "mongoose";
 
-let userSchema = new Schema(
+// 1. Create an interface representing a document in MongoDB.
+interface User {
+  username: string;
+  password: string;
+  email?: string;
+  avatar?: string;
+  role?: number;
+  profile?: string;
+  createTime: Date;
+  updateTime: Date;
+}
+
+// 2. Create a Schema corresponding to the document interface.
+const schema = new Schema<User>(
   {
     // 用户名
     username: {
       type: String,
       unique: true,
-      max: 50,
+      maxLength: 50,
       trim: true,
       required: [true, "用户名不能为空"],
     },
     // 密码
     password: {
       type: String,
-      max: 50,
+      maxLength: 50,
       trim: true,
       required: [true, "密码不能为空"],
     },
     // 邮箱
     email: {
       type: String,
-      max: 50,
+      maxLength: 50,
       default: "",
     },
     // 头像地址
     avatar: {
       type: String,
-      max: 200,
+      maxLength: 200,
     },
     // 权限：博主：0；用户、游客：1
     role: {
@@ -36,7 +49,7 @@ let userSchema = new Schema(
     // 个人简介
     profile: {
       type: String,
-      max: 500,
+      maxLength: 500,
     },
     createTime: {
       type: Date,
@@ -52,5 +65,6 @@ let userSchema = new Schema(
   }
 );
 
-const UserModel = model("User", userSchema);
+// 3. Create a Model.
+const UserModel = model<User>("User", schema);
 export default UserModel;

@@ -1,6 +1,5 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
-import { Request, Response } from "express";
 import UserDao from "../dao/userDao";
 import JwtUtil from "../util/jwt";
 import { checkEditable } from "../util/checkAuth";

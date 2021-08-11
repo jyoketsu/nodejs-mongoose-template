@@ -20,7 +20,7 @@ export default class Jwt {
         // 有效期：7天
         exp: created + 60 * 60 * 24 * 7,
       },
-      { key: cert, passphrase: "jyoketsu" },
+      { key: cert, passphrase: "nani-tabe" },
       { algorithm: "RS256" }
     );
     return token;
