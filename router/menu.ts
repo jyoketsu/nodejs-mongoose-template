@@ -28,8 +28,8 @@ router.post(
   "/create",
   [
     check("name").notEmpty().withMessage("缺少参数：name"),
-    check("name").isLength({ max: 50 }).withMessage("最多50个字符！"),
-    check("color").notEmpty().withMessage("缺少参数：color"),
+    check("describe").isLength({ max: 200 }).withMessage("最多200个字符！"),
+    check("cover").notEmpty().withMessage("缺少参数：cover"),
   ],
   async (req: Request, res: Response) => {
     const editable = checkEditable(req, res);

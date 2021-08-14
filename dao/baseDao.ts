@@ -149,7 +149,7 @@ export default class BaseDao {
    * @param orderType
    * @returns {Promise}
    */
-  findOneByOrder(filter: FilterQuery<any>, orderColumn: any, orderType: any) {
+  findOneByOrder(filter: FilterQuery<any>, orderColumn: any, orderType: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.model
         .findOne(filter)
