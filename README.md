@@ -1,11 +1,15 @@
-# 今天吃什么-后端
+# nodejs-mongoose-template
 
-以`Express` + `TypeScript` + `Mongoose`技术栈来构建的应用
+An application built using the `Express` + `TypeScript` + `Mongoose`.
 
-## start
+
+## Start
 
 yarn start
 
-## build
+## Build
 
 yarn build
+
+## Swagger UI
+http://localhost:8099/api-docs/#/user/updatePet

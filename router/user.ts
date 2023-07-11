@@ -5,6 +5,15 @@ import JwtUtil from "../util/jwt";
 import { checkEditable } from "../util/checkAuth";
 const router = express.Router();
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     description: Welcome to swagger-jsdoc!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious string.
+ */
 router.get("/", async (req, res) => {
   let userDao = new UserDao();
   const result = await userDao.findAll();
@@ -61,7 +70,7 @@ router.post(
       let jwt = new JwtUtil(result);
       let token = jwt.generateToken();
       res.json({ status: 200, token: token, result: result });
-    } catch (error) {
+    } catch (error: any) {
       res.json({
         status: 500,
         error,
@@ -137,7 +146,7 @@ router.patch(
         req.body.updater
       );
       res.json({ status: 200, result: result });
-    } catch (error) {
+    } catch (error: any) {
       res.json({
         status: 500,
         error,
@@ -170,5 +179,11 @@ router.delete(
     }
   }
 );
+// 是否有博主
+router.get("/count", async (req, res) => {
+  let userDao = new UserDao();
+  const result = await userDao.count({});
+  res.json({ status: 200, result: result });
+});
 
 export default router;
