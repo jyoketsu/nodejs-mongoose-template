@@ -20,7 +20,7 @@ export default class Jwt {
         // 有效期：7天
         exp: created + 60 * 60 * 24 * 7,
       },
-      { key: cert, passphrase: "nani-tabe" },
+      { key: cert, passphrase: "nodejs-mongoose-template" },
       { algorithm: "RS256" }
     );
     return token;

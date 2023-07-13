@@ -6,13 +6,13 @@ import { checkEditable } from "../util/checkAuth";
 const router = express.Router();
 
 /**
- * @openapi
+ * @swagger
  * /:
  *   get:
- *     description: Welcome to swagger-jsdoc!
+ *     description: 获取用户列表
  *     responses:
  *       200:
- *         description: Returns a mysterious string.
+ *         description: 返回用户列表
  */
 router.get("/", async (req, res) => {
   let userDao = new UserDao();
@@ -20,6 +20,22 @@ router.get("/", async (req, res) => {
   res.json({ status: 200, result: result });
 });
 
+/**
+ * @swagger
+ * /detail:
+ *   get:
+ *     description: 通过_id获取用户详情
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: _id
+ *         description: 用户id
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: 用户详情
+ */
 router.get("/detail", async (req, res) => {
   try {
     let userDao = new UserDao();
@@ -34,15 +50,32 @@ router.get("/detail", async (req, res) => {
   }
 });
 
-// 校验
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     description: 用户注册
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: username
+ *         description: 用户名
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: 密码
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: 用户
+ */
 const createValidationChecks = [
   check("username").isLength({ min: 1 }).withMessage("请输入用户名！"),
   check("username").isLength({ max: 50 }).withMessage("用户名最大50个字符！"),
   check("password").isLength({ min: 1 }).withMessage("请输入密码！"),
   check("password").isLength({ max: 50 }).withMessage("密码最大50个字符！"),
 ];
-
-// 注册
 router.post(
   "/register",
   createValidationChecks,
@@ -69,7 +102,7 @@ router.post(
       // 将用户传入并生成token
       let jwt = new JwtUtil(result);
       let token = jwt.generateToken();
-      res.json({ status: 200, token: token, result: result });
+      res.json({ status: 200, token, result });
     } catch (error: any) {
       res.json({
         status: 500,
@@ -80,7 +113,15 @@ router.post(
   }
 );
 
-// token登录
+/**
+ * @swagger
+ * /loginByToken:
+ *   get:
+ *     description: 通过token登录
+ *     responses:
+ *       200:
+ *         description: 用户详情
+ */
 router.get("/loginByToken", async (req, res) => {
   let token = req.headers.token;
   let jwt = new JwtUtil(token as string);
@@ -88,13 +129,30 @@ router.get("/loginByToken", async (req, res) => {
   if (result == "err") {
     res.send({ status: 403, msg: "登录已过期,请重新登录" });
   } else {
-    // let userDao = new UserDao();
-    // const result = await userDao.findById(_id);
     res.json({ status: 200, token: token, result: result });
   }
 });
 
-// 登录
+/**
+ * @swagger
+ * /login:
+ *   get:
+ *     description: 用户名&密码登录
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: username
+ *         description: 用户名
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: 密码
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: 用户详情
+ */
 router.get("/login", async (req, res) => {
   let userDao = new UserDao();
   const result = await userDao.findOne({
@@ -111,8 +169,16 @@ router.get("/login", async (req, res) => {
   }
 });
 
-// 是否有博主
-router.get("/blogger", async (req, res) => {
+/**
+ * @swagger
+ * /super:
+ *   get:
+ *     description: 获取超管
+ *     responses:
+ *       200:
+ *         description: 超管
+ */
+router.get("/super", async (req, res) => {
   let userDao = new UserDao();
   const result = await userDao.findOne({
     role: 0,
@@ -120,12 +186,30 @@ router.get("/blogger", async (req, res) => {
   res.json({ status: 200, result: result });
 });
 
-// 校验
+/**
+ * @swagger
+ * /update:
+ *   patch:
+ *     description: 修改用户
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: _id
+ *         description: 用户id
+ *         required: true
+ *         type: string
+ *       - name: updater
+ *         description: 要更新的用户属性
+ *         required: true
+ *         type: object
+ *     responses:
+ *       200:
+ *         description: 用户
+ */
 const updateValidationChecks = [
   check("_id").notEmpty().withMessage("缺少_id！"),
   check("updater").notEmpty().withMessage("缺少参数updater"),
 ];
-// 修改
 router.patch(
   "/update",
   updateValidationChecks,
@@ -156,7 +240,22 @@ router.patch(
   }
 );
 
-// 删除用户
+/**
+ * @swagger
+ * /delete:
+ *   delete:
+ *     description: 删除用户
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: _id
+ *         description: 用户id
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: 用户
+ */
 router.delete(
   "/delete",
   [check("_id").notEmpty().withMessage("缺少_id！")],
@@ -179,7 +278,16 @@ router.delete(
     }
   }
 );
-// 是否有博主
+
+/**
+ * @swagger
+ * /count:
+ *   get:
+ *     description: 获取用户数量
+ *     responses:
+ *       200:
+ *         description: 用户数量
+ */
 router.get("/count", async (req, res) => {
   let userDao = new UserDao();
   const result = await userDao.count({});

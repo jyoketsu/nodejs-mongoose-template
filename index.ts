@@ -27,7 +27,7 @@ const options = {
       version: "1.0.11",
     },
   },
-  // 去哪个路由下收集 swagger 注释
+  // 去哪个路由下收集swagger注释
   apis: ["./router/*.ts"],
 };
 
