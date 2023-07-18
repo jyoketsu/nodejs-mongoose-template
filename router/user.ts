@@ -6,10 +6,19 @@ import { checkEditable } from "../util/checkAuth";
 const router = express.Router();
 
 /**
- * @swagger
- * /:
+ * @openapi
+ * tags:
+ *   name: User
+ *   description: 用户管理、用户注册与登录
+ */
+
+/**
+ * @openapi
+ * /user:
  *   get:
- *     description: 获取用户列表
+ *     summary: 获取用户列表
+ *     tags:
+ *      - User
  *     responses:
  *       200:
  *         description: 返回用户列表
@@ -21,17 +30,19 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * @swagger
- * /detail:
+ * @openapi
+ * /user/detail:
  *   get:
- *     description: 通过_id获取用户详情
- *     produces:
- *       - application/json
+ *     summary: 通过_id获取用户详情
+ *     tags:
+ *      - User
  *     parameters:
- *       - name: _id
- *         description: 用户id
+ *       - in: query
+ *         name: _id
+ *         schema:
+ *           type: string
  *         required: true
- *         type: string
+ *         description: 用户id
  *     responses:
  *       200:
  *         description: 用户详情
@@ -51,24 +62,52 @@ router.get("/detail", async (req, res) => {
 });
 
 /**
- * @swagger
- * /register:
+ * @openapi
+ * /user/register:
  *   post:
- *     description: 用户注册
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: username
- *         description: 用户名
- *         required: true
- *         type: string
- *       - name: password
- *         description: 密码
- *         required: true
- *         type: string
+ *     summary: 用户注册
+ *     tags:
+ *      - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *              password:
+ *                type: string
  *     responses:
  *       200:
- *         description: 用户
+ *         description: A user object.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ...
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     username:
+ *                       type:string;
+ *                     password:
+ *                       type:string;
+ *                     email:
+ *                       type:string;
+ *                     role:
+ *                       type:integer
+ *                       format:int64
+ *                     _id:
+ *                       type:string
+ *       403:
+ *         description: 输入错误
+ *       500:
+ *         description: 错误
  */
 const createValidationChecks = [
   check("username").isLength({ min: 1 }).withMessage("请输入用户名！"),
@@ -104,6 +143,7 @@ router.post(
       let token = jwt.generateToken();
       res.json({ status: 200, token, result });
     } catch (error: any) {
+      console.log("---error---", error);
       res.json({
         status: 500,
         error,
@@ -114,10 +154,12 @@ router.post(
 );
 
 /**
- * @swagger
- * /loginByToken:
+ * @openapi
+ * /user/loginByToken:
  *   get:
  *     description: 通过token登录
+ *     tags:
+ *      - User
  *     responses:
  *       200:
  *         description: 用户详情
@@ -134,10 +176,12 @@ router.get("/loginByToken", async (req, res) => {
 });
 
 /**
- * @swagger
- * /login:
+ * @openapi
+ * /user/login:
  *   get:
  *     description: 用户名&密码登录
+ *     tags:
+ *      - User
  *     produces:
  *       - application/json
  *     parameters:
@@ -170,10 +214,12 @@ router.get("/login", async (req, res) => {
 });
 
 /**
- * @swagger
- * /super:
+ * @openapi
+ * /user/super:
  *   get:
  *     description: 获取超管
+ *     tags:
+ *      - User
  *     responses:
  *       200:
  *         description: 超管
@@ -187,10 +233,12 @@ router.get("/super", async (req, res) => {
 });
 
 /**
- * @swagger
+ * @openapi
  * /update:
  *   patch:
  *     description: 修改用户
+ *     tags:
+ *      - User
  *     produces:
  *       - application/json
  *     parameters:
@@ -241,23 +289,25 @@ router.patch(
 );
 
 /**
- * @swagger
- * /delete:
+ * @openapi
+ * /user/delete/{_id}:
  *   delete:
- *     description: 删除用户
- *     produces:
- *       - application/json
+ *     summary: 删除用户
+ *     tags:
+ *      - User
  *     parameters:
- *       - name: _id
- *         description: 用户id
- *         required: true
- *         type: string
+ *      - in: path
+ *        name: _id
+ *        required: true
+ *        schema:
+ *          type: string
+ *        description: 用户id
  *     responses:
  *       200:
- *         description: 用户
+ *         description: OK
  */
 router.delete(
-  "/delete",
+  "/delete/:_id",
   [check("_id").notEmpty().withMessage("缺少_id！")],
   async (req: Request, res: Response) => {
     var errors = validationResult(req);
@@ -265,9 +315,10 @@ router.delete(
       return res.json({ status: 403, errors: errors.mapped() });
     }
     try {
+      const _id = req.params._id;
       let userDao = new UserDao();
       // 删除
-      const result = await userDao.deleteOne({ _id: req.body._id });
+      const result = await userDao.deleteOne({ _id });
       res.json({ status: 200, result: result });
     } catch (error) {
       res.json({
@@ -280,10 +331,12 @@ router.delete(
 );
 
 /**
- * @swagger
- * /count:
+ * @openapi
+ * /user/count:
  *   get:
  *     description: 获取用户数量
+ *     tags:
+ *      - User
  *     responses:
  *       200:
  *         description: 用户数量
