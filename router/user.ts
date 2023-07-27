@@ -14,6 +14,16 @@ const router = express.Router();
 
 /**
  * @openapi
+ * components:
+ *   securitySchemes:
+ *     ApiKeyAuth:
+ *       type: apiKey
+ *       in: header
+ *       name: token
+ */
+
+/**
+ * @openapi
  * /user:
  *   get:
  *     summary: 获取用户列表
@@ -252,6 +262,8 @@ router.get("/super", async (req, res) => {
  *                type: string
  *              updater:
  *                type: object
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: A user object.
@@ -308,6 +320,8 @@ router.patch(
  *        schema:
  *          type: string
  *        description: 用户id
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: OK
@@ -319,6 +333,10 @@ router.delete(
     var errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.json({ status: 403, errors: errors.mapped() });
+    }
+    const editable = checkEditable(req, res);
+    if (!editable) {
+      return;
     }
     try {
       const _id = req.params._id;
