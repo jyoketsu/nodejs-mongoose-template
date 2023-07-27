@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 
 // 1. Create an interface representing a document in MongoDB.
 interface User {
+  _id: string;
   username: string;
   password: string;
   email?: string;

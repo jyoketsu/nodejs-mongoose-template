@@ -157,7 +157,7 @@ router.post(
  * @openapi
  * /user/loginByToken:
  *   get:
- *     description: 通过token登录
+ *     summary: 通过token登录
  *     tags:
  *      - User
  *     responses:
@@ -179,20 +179,22 @@ router.get("/loginByToken", async (req, res) => {
  * @openapi
  * /user/login:
  *   get:
- *     description: 用户名&密码登录
+ *     summary: 用户名&密码登录
  *     tags:
  *      - User
- *     produces:
- *       - application/json
  *     parameters:
- *       - name: username
+ *       - in: query
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
  *         description: 用户名
+ *       - in: query
+ *         name: password
+ *         schema:
+ *           type: string
  *         required: true
- *         type: string
- *       - name: password
  *         description: 密码
- *         required: true
- *         type: string
  *     responses:
  *       200:
  *         description: 用户详情
@@ -217,12 +219,12 @@ router.get("/login", async (req, res) => {
  * @openapi
  * /user/super:
  *   get:
- *     description: 获取超管
+ *     summary: 获取超管
  *     tags:
  *      - User
  *     responses:
  *       200:
- *         description: 超管
+ *         description: 返回用户
  */
 router.get("/super", async (req, res) => {
   let userDao = new UserDao();
@@ -234,25 +236,29 @@ router.get("/super", async (req, res) => {
 
 /**
  * @openapi
- * /update:
+ * /user/update:
  *   patch:
- *     description: 修改用户
+ *     summary: 修改用户
  *     tags:
  *      - User
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: _id
- *         description: 用户id
- *         required: true
- *         type: string
- *       - name: updater
- *         description: 要更新的用户属性
- *         required: true
- *         type: object
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              _id:
+ *                type: string
+ *              updater:
+ *                type: object
  *     responses:
  *       200:
- *         description: 用户
+ *         description: A user object.
+ *       403:
+ *         description: 输入错误
+ *       500:
+ *         description: 错误
  */
 const updateValidationChecks = [
   check("_id").notEmpty().withMessage("缺少_id！"),
@@ -334,7 +340,7 @@ router.delete(
  * @openapi
  * /user/count:
  *   get:
- *     description: 获取用户数量
+ *     summary: 获取用户数量
  *     tags:
  *      - User
  *     responses:
