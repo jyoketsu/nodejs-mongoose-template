@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import user from "./router/user";
+import ingredient from "./router/ingredient";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "swagger-jsdoc";
@@ -64,6 +65,7 @@ app.get("/", function (req: any, res: any) {
   res.send("Hello World");
 });
 app.use("/user", user);
+app.use("/ingredient", ingredient);
 
 // 启动服务
 app.listen(8099, () => {

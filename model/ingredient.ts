@@ -2,8 +2,10 @@ import { Schema, model } from "mongoose";
 
 // 食材
 interface Ingredient {
+  _id: string;
   name: string;
-  cover: string;
+  image: string;
+  category: "vegetable" | "meat" | "seafood" | "fruit" | "condiment" | "other";
   availableMonths: number[];
   createTime: Date;
   updateTime: Date;
@@ -18,10 +20,15 @@ const schema = new Schema<Ingredient>(
       trim: true,
       required: [true, "名字不能为空"],
     },
-    cover: {
+    image: {
       type: String,
       trim: true,
-      maxLength: 500,
+      maxLength: 100,
+    },
+    category: {
+      type: String,
+      trim: true,
+      maxLength: 20,
     },
     availableMonths: [
       {
