@@ -1,5 +1,6 @@
 import BaseDao from "./baseDao";
 import Recipe from "../model/recipe";
+import mongoose from "mongoose";
 
 export default class RecipeDao extends BaseDao {
   constructor() {
@@ -9,23 +10,28 @@ export default class RecipeDao extends BaseDao {
   findDetailById(_id: any) {
     return this.model
       .aggregate([
-        { $match: { _id } },
+        { $match: { _id: new mongoose.Types.ObjectId(_id) } },
         {
           $lookup: {
-            from: "RecipeIngredient",
+            from: "recipeingredients",
             localField: "_id",
             foreignField: "recipe_id",
-            as: "recipeIngredients",
+            as: "recipeingredients",
           },
         },
         {
           $lookup: {
-            from: "Ingredient",
-            localField: "recipeIngredients.ingredient_id",
+            from: "ingredients",
+            localField: "recipeingredients.ingredient_id",
             foreignField: "_id",
             as: "ingredients",
           },
         },
+        // {
+        //   $project: {
+        //     ingredients: { name: 1 }, // 保留 ingredients 数组中的 name 字段
+        //   },
+        // },
       ])
       .exec();
   }

@@ -43,8 +43,6 @@ const router = express.Router();
  *                type: string
  *              availableMonths:
  *                type: array
- * 								items:
- * 									type: string
  *     security:
  *       - ApiKeyAuth: []
  *     responses:
@@ -73,7 +71,6 @@ router.post(
       const result = await ingredientDao.create(req.body);
       res.json({ status: 200, result });
     } catch (error: any) {
-      console.log("---error---", error);
       res.json({
         status: 500,
         error,

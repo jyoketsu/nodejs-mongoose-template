@@ -153,7 +153,6 @@ router.post(
       let token = jwt.generateToken();
       res.json({ status: 200, token, result });
     } catch (error: any) {
-      console.log("---error---", error);
       res.json({
         status: 500,
         error,

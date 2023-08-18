@@ -40,7 +40,6 @@ router.get(
       );
       res.json({ status: 200, result: result });
     } catch (error) {
-      console.log("---error---", error);
       res.json({
         status: 500,
         error,

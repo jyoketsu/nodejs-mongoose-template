@@ -67,5 +67,6 @@ const schema = new Schema<User>(
 );
 
 // 3. Create a Model.
+// 创建模型时，Mongoose会自动将模型名称转化为小写作为表名
 const UserModel = model<User>("User", schema);
 export default UserModel;

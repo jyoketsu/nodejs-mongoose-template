@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
 import RecipeDao from "../dao/recipeDao";
 import { checkEditable } from "../util/checkAuth";
+import RecipeIngredientDao from "../dao/recipeIngredientDao";
 const router = express.Router();
 
 /**
@@ -33,6 +34,8 @@ const router = express.Router();
  *                type: string
  *              content:
  *                type: string
+ *              ingredientIds:
+ *                type: array
  *     security:
  *       - ApiKeyAuth: []
  *     responses:
@@ -46,7 +49,6 @@ const createValidationChecks = [
   check("description")
     .isLength({ max: 200 })
     .withMessage("描述最大200个字符！"),
-  check("cover").isLength({ min: 1 }).withMessage("请输入封面！"),
   check("cover").isLength({ max: 100 }).withMessage("封面最大100个字符！"),
   check("content").isLength({ min: 1 }).withMessage("请输入内容！"),
   check("content").isLength({ max: 5000 }).withMessage("内容最大5000个字符！"),
@@ -65,11 +67,32 @@ router.post(
       return res.json({ status: 403, errors: errors.mapped() });
     }
     let recipeDao = new RecipeDao();
+    let recipeIngredientDao = new RecipeIngredientDao();
     try {
-      const result = await recipeDao.create(req.body);
-      res.json({ status: 200, result });
+      const { title, description, cover, content, ingredientIds } = req.body;
+      const result = await recipeDao.create({
+        title,
+        description,
+        cover,
+        content,
+      });
+      Promise.all(
+        ingredientIds.map((id: string) =>
+          recipeIngredientDao.create({
+            recipe_id: result._id,
+            ingredient_id: id,
+          })
+        )
+      )
+        .then((posts) => res.json({ status: 200, result }))
+        .catch((error) =>
+          res.json({
+            status: 500,
+            error,
+            msg: "服务出错！",
+          })
+        );
     } catch (error: any) {
-      console.log("---error---", error);
       res.json({
         status: 500,
         error,
@@ -237,3 +260,5 @@ router.get("/detail", async (req, res) => {
     });
   }
 });
+
+export default router;

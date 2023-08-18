@@ -2,12 +2,14 @@ import express from "express";
 import bodyParser from "body-parser";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import user from "./router/user";
-import ingredient from "./router/ingredient";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "swagger-jsdoc";
 // import swaggerDocument from "./swagger.json";
+import user from "./router/user";
+import ingredient from "./router/ingredient";
+import recipe from "./router/recipe";
+import favorite from "./router/favorite";
 
 //配置swagger-jsdoc
 const options = {
@@ -66,6 +68,8 @@ app.get("/", function (req: any, res: any) {
 });
 app.use("/user", user);
 app.use("/ingredient", ingredient);
+app.use("/recipe", recipe);
+app.use("/favorite", favorite);
 
 // 启动服务
 app.listen(8099, () => {
