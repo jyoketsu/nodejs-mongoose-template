@@ -151,7 +151,9 @@ router.post(
       // 将用户传入并生成token
       let jwt = new JwtUtil(result);
       let token = jwt.generateToken();
-      res.json({ status: 200, token, result });
+      res.cookie("token", token, { maxAge: 604800 });
+      // res.send("Cookie已设置");
+      res.json({ status: 200, result });
     } catch (error: any) {
       res.json({
         status: 500,
@@ -174,7 +176,7 @@ router.post(
  *         description: 用户详情
  */
 router.get("/loginByToken", async (req, res) => {
-  let token = req.headers.token;
+  const token = req.cookies.token;
   let jwt = new JwtUtil(token as string);
   let result = jwt.verifyToken();
   if (result == "err") {
@@ -218,7 +220,8 @@ router.get("/login", async (req, res) => {
     // 将用户传入并生成token
     let jwt = new JwtUtil(result);
     let token = jwt.generateToken();
-    res.json({ status: 200, token: token, result: result });
+    res.cookie("token", token, { maxAge: 604800 });
+    res.json({ status: 200, result });
   } else {
     res.json({ status: 401, msg: "用户名或者密码错误！" });
   }

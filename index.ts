@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -42,13 +43,14 @@ db.once("open", function () {
 });
 
 app.all("*", function (req: Request, res: Response, next: any) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Origin", "http://localhost:5174");
+  res.header("Access-Control-Allow-Credentials", "true"); //是否支持cookie跨域
+  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
   res.header(
     "Access-Control-Allow-Methods",
     "PUT,POST,PATCH,GET,DELETE,OPTIONS"
   );
-  res.header("Access-Control-Allow-Headers", "Content-Type,token");
+  // res.header("Access-Control-Allow-Headers", "Content-Type,token");
   next();
 });
 
@@ -58,7 +60,8 @@ app.use(express.static("public"));
 // body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
+// 使用cookie-parser中间件来解析Cookie
+app.use(cookieParser());
 // swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
