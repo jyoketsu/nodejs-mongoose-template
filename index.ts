@@ -43,7 +43,7 @@ db.once("open", function () {
 });
 
 app.all("*", function (req: Request, res: Response, next: any) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5174");
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Credentials", "true"); //是否支持cookie跨域
   res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
   res.header(

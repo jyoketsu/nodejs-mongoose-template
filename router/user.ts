@@ -151,7 +151,7 @@ router.post(
       // 将用户传入并生成token
       let jwt = new JwtUtil(result);
       let token = jwt.generateToken();
-      res.cookie("token", token, { maxAge: 604800 });
+      res.cookie("token", token, { maxAge: 604800000 });
       // res.send("Cookie已设置");
       res.json({ status: 200, result });
     } catch (error: any) {
@@ -220,7 +220,7 @@ router.get("/login", async (req, res) => {
     // 将用户传入并生成token
     let jwt = new JwtUtil(result);
     let token = jwt.generateToken();
-    res.cookie("token", token, { maxAge: 604800 });
+    res.cookie("token", token, { maxAge: 604800000 });
     res.json({ status: 200, result });
   } else {
     res.json({ status: 401, msg: "用户名或者密码错误！" });
