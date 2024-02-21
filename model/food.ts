@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 interface Food {
   name: string;
@@ -58,5 +58,6 @@ const schema = new Schema<Food>(
 );
 
 // 3. Create a Model.
-const FoodModel = model<Food>("Food", schema);
-export default FoodModel;
+// const FoodModel = model<Food>("Food", schema);
+// export default FoodModel;
+export default models.Food || model<Food>("Food", schema);

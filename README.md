@@ -21,6 +21,13 @@ yarn start
 
 yarn build
 
+## Install Mongo
+```
+docker pull mongo
+
+docker run -d -p 27017:27017 -v /Users/jyoketsu/Documents/workspace/docker/mongo/db:/data/db --name mongodb mongo
+```
+
 ## Mongoose docs
 
 https://mongoosejs.com/docs/guide.html
